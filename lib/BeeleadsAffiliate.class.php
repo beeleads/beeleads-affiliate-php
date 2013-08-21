@@ -9,8 +9,8 @@ class BeeleadsAffiliate
 {
 
     const API_VERSION = '1.0';
-    const API_URL = 'https://hive.bldstools.com/api.php/v1/lead/';
 
+    private $API_URL = 'https://hive.bldstools.com/api.php/v1/lead/';
     private $affiliate_id;
     private $secret;
     private $offer_id;
@@ -43,7 +43,7 @@ class BeeleadsAffiliate
 
         /* Prepare data and build URL */
         $data = http_build_query(array('field' => $arr_lead));
-        $url = self::API_URL . "?token={$token}&affiliate_id={$this->affiliate_id}&offer_id={$this->offer_id}&{$data}";
+        $url = $this->API_URL . "?token={$token}&affiliate_id={$this->affiliate_id}&offer_id={$this->offer_id}&{$data}";
 
         /* Call URL and parse the response */
         $arr_call = self::callApi($url);
@@ -78,6 +78,26 @@ class BeeleadsAffiliate
     }
 
     /**
+     * Sets a new API URL
+     * 
+     * @param string $url
+     */
+    public function setApiUrl($url)
+    {
+        $this->API_URL = $url;
+    }
+
+    /**
+     * Returns current API URL
+     * 
+     * @return string
+     */
+    public function getApiUrl()
+    {
+        return $this->API_URL;
+    }
+
+    /**
      * Calls an URL via GET using cURL or file_get_contents
      * 
      * @param string $url
@@ -85,6 +105,8 @@ class BeeleadsAffiliate
      */
     private static function callApi($url)
     {
+
+        $call_via_file_get_contents = false;
 
         if (is_callable('curl_init'))
         {
@@ -101,8 +123,18 @@ class BeeleadsAffiliate
             $http_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
 
             curl_close($curl_handle);
+            
+            if (0 == (int) $http_code)
+            {
+                $call_via_file_get_contents = true;
+            }
         }
         else
+        {
+            $call_via_file_get_contents = true;
+        }
+
+        if (true == $call_via_file_get_contents)
         {
             $http_code = 200;
             $response = file_get_contents($url);
