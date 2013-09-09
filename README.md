@@ -28,4 +28,5 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
 	
 
 #### Changelog
+**2013-09-09**: Moved repo to 'Adclick' user
 **2013-08-16**: First public release
