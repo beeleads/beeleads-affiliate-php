@@ -42,5 +42,3 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
 **2013-09-09**: Moved repo to 'Adclick' user
 
 **2013-08-16**: First public release
-
-**2013-09-11**: Added a method "offer fields" it returns the mandatory fields of a given offer
