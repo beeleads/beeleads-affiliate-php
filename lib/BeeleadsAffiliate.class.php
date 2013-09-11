@@ -10,7 +10,7 @@ class BeeleadsAffiliate
 
     const API_VERSION = '1.0';
 
-    private $API_URL = 'https://hive.bldstools.com/api.php/v1/lead/';
+    private $API_URL = 'https://hive.bldstools.com/api.php/v1';
     private $affiliate_id;
     private $secret;
     private $offer_id;
@@ -30,6 +30,9 @@ class BeeleadsAffiliate
      */
     public function sendLead($arr_lead)
     {
+        /* Set the url request */
+        self::setApiUrl('https://hive.bldstools.com/api.php/v1/lead');
+
         $arr_ret = array(
             'status' => false,
             'message' => 'Invalid response from API. Please try again later. If the problem persists, please contact suporte@beeleads.com.br',
@@ -62,6 +65,62 @@ class BeeleadsAffiliate
                 else
                 { /* API rejected the lead */
                     $arr_ret['message'] = 'Lead did not integrate';
+                }
+            }
+            else
+            { /* Invalid JSON response, something is wrong with the API */
+                $arr_ret['details'] = array('Invalid JSON response');
+            }
+        }
+        else
+        {
+            $arr_ret['details'] = array("Invalid HTTP code. Expected 200, got {$arr_call['http_code']}");
+        }
+
+        return $arr_ret;
+    }
+
+    /**
+     * It get the mandatory fields of an offer
+     * 
+     * @return array result of offer mandatory fields
+     */
+    public function get_offer_fields(){
+        /* Set the url request */
+        self::setApiUrl('https://hive.bldstools.com/api.php/v1/offer/fieldnames');
+
+        $arr_ret = array(
+            'status' => false,
+            'message' => 'Invalid response from API. Please try again later. If the problem persists, please contact suporte@beeleads.com.br',
+            'details' => array()
+        );
+
+         /* Generate Token */
+        $token = sha1($this->secret . http_build_query(array("none")));
+
+        /* Prepare data and build URL */
+        $data = http_build_query(array('field' => array("none")));
+
+        /* Prepare data and build URL */
+        $url = $this->API_URL . "?token={$token}&affiliate_id={$this->affiliate_id}&offer_id={$this->offer_id}&{$data}";
+
+        /* Call URL and parse the response */
+        return self::callApi($url);
+        if (200 == $arr_call['http_code'])
+        {
+            $arr_response = @json_decode($arr_call['response'], true);
+            if (json_last_error() == JSON_ERROR_NONE)
+            { /* This means the API replied a valid JSON response */
+                $arr_ret['details'] = $arr_response;
+
+                if (200 == $arr_response['response']['status'])
+                { /* request successfully */
+                    $arr_ret['status'] = true;
+                    $arr_ret['message'] = 'Request OK';
+                }
+                else
+                { /* API erros*/
+                    $arr_ret['message'] = 'request not ok';
                 }
             }
             else
