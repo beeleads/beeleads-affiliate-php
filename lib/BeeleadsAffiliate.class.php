@@ -24,7 +24,7 @@ class BeeleadsAffiliate
 
     /**
      * Sends a lead to Beeleads
-     * 
+     *
      * @param array $arr_lead Lead key-value array
      * @return array result of lead insertion (status => boolean, message => string, details => array)
      */
@@ -81,10 +81,10 @@ class BeeleadsAffiliate
 
     /**
      * It get the mandatory fields of an offer
-     * 
+     *
      * @return array result of offer mandatory fields
      */
-    public function getOfferRequiredFieldnames() 
+    public function getOfferRequiredFieldnames()
     {
         $arr_ret = array(
             'status' => false,
@@ -92,7 +92,7 @@ class BeeleadsAffiliate
             'details' => array()
         );
 
-         /* Generate Token */
+        /* Generate Token */
         $token = sha1($this->secret . http_build_query(array("none")));
 
         /* Prepare data and build URL */
@@ -136,9 +136,60 @@ class BeeleadsAffiliate
         return $arr_ret;
     }
 
+
+    public function getLeadStatus($lead_id)
+    {
+        $arr_ret = array(
+            'status' => false,
+            'message' => 'Invalid response from API. Please try again later. If the problem persists, please contact suporte@beeleads.com.br',
+            'details' => array()
+        );
+
+        $arr_lead = array_map("urlencode", array('lead_id' => $lead_id));
+
+        /* Generate Token */
+        $token = sha1($this->secret . http_build_query($arr_lead));
+
+        /* Prepare data and build URL */
+        $data = http_build_query(array('field' => $arr_lead));
+        $url = $this->API_URL . "lead/get_status/?token={$token}&affiliate_id={$this->affiliate_id}&{$data}";
+
+        /* Call URL and parse the response */
+        $arr_call = self::callApi($url);
+        if (200 == $arr_call['http_code'])
+        {
+            $arr_response = @json_decode($arr_call['response'], true);
+            if (json_last_error() == JSON_ERROR_NONE)
+            { /* This means the API replied a valid JSON response */
+                $arr_ret['details'] = $arr_response;
+
+                if (200 == $arr_response['response']['status'])
+                { /* Lead was found */
+                    $arr_ret['status'] = true;
+                    $arr_ret['message'] = 'Lead found. See lead integration status on \'data\'';
+                    $arr_ret['data'] = $arr_response['response']['data']['status'];
+                }
+                else
+                { /* Lead was not found */
+                    $arr_ret['message'] = 'Lead was not found';
+                }
+            }
+            else
+            { /* Invalid JSON response, something is wrong with the API */
+                $arr_ret['details'] = array('Invalid JSON response');
+            }
+        }
+        else
+        {
+            $arr_ret['details'] = array("Invalid HTTP code. Expected 200, got {$arr_call['http_code']}");
+        }
+
+        return $arr_ret;
+    }
+
     /**
      * Sets a new API URL
-     * 
+     *
      * @param string $url
      */
     public function setApiUrl($url)
@@ -148,7 +199,7 @@ class BeeleadsAffiliate
 
     /**
      * Returns current API URL
-     * 
+     *
      * @return string
      */
     public function getApiUrl()
@@ -158,7 +209,7 @@ class BeeleadsAffiliate
 
     /**
      * Calls an URL via GET using cURL or file_get_contents
-     * 
+     *
      * @param string $url
      * @return array the response (http_code => int, response => string)
      */
@@ -182,7 +233,7 @@ class BeeleadsAffiliate
             $http_code = curl_getinfo($curl_handle, CURLINFO_HTTP_CODE);
 
             curl_close($curl_handle);
-            
+
             if (0 == (int) $http_code)
             {
                 $call_via_file_get_contents = true;
