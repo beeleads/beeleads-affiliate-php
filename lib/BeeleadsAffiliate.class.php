@@ -80,9 +80,9 @@ class BeeleadsAffiliate
     }
 
     /**
-     * It get the mandatory fields of an offer
+     * Returns offer's required fieldnames
      *
-     * @return array result of offer mandatory fields
+     * @return array result of offer required fields
      */
     public function getOfferRequiredFieldnames()
     {
@@ -137,6 +137,18 @@ class BeeleadsAffiliate
     }
 
 
+    /**
+     * Returns status for given lead.
+     *
+     * Available status:
+     * - TEST_CONTACT_OK
+     * - PENDING_APPROVAL
+     * - APPROVED
+     * - REJECTED
+     *
+     * @param string $lead_id
+     * @return array result of lead status request (status => boolean, message => string, details => array)
+     */
     public function getLeadStatus($lead_id)
     {
         $arr_ret = array(
