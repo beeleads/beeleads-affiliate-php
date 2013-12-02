@@ -13,6 +13,18 @@ In order to use this API make sure you have the following information:
 
 If you are missing any of this info, please contact suporte@beeleads.com.br
 
+## Data Types and Formats
+
+### Length
+Maximum length for all fields is 255 characters except *gender* which is limited to 1 character.
+
+### Field specific formats
+- **gender** - "M" for Male, "F" for Female, "N" for unknown
+- **birthdate** - YYYY-MM-DD (example: "1984-19-04") 
+- **contact_schedule** - HH:MM - HH:MM (example: "10:00 - 12:00")
+- **state** - Brazilian state abbreviation (example: "SP" for São Paulo), [http://goo.gl/qCk2V](http://goo.gl/qCk2V)
+
+
 ===
 
 ## Methods
@@ -26,15 +38,17 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
 
 
 #### *sendLead*
-	$blds = new BeeleadsAffiliate('your-affiliate-id', 'your-api-secret', 'beeleads-offer-id');
+```php
+$blds = new BeeleadsAffiliate('your-affiliate-id', 'your-api-secret', 'beeleads-offer-id');
 
-	$arr_lead = array(
-    	'email' => 'test@example.com',
-    	'firstname' => 'Jon',
-    	'lastname' => 'Doe'
-	);
+$arr_lead = array(
+	'email' => 'test@example.com',
+	'firstname' => 'Jon',
+	'lastname' => 'Doe'
+);
+$arr_response = $blds->sendLead($arr_lead);
+```
 	
-	$arr_response = $blds->sendLead($arr_lead);
 ###### Sample Output
     Array
     (
@@ -80,8 +94,10 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
 ===
 
 #### *getOfferRequiredFieldnames*
-	$blds = new BeeleadsAffiliate('your-affiliate-id', 'your-api-secret', 'beeleads-offer-id');
-	$arr_offer_fields = $blds->getOfferRequiredFieldnames();
+```php
+$blds = new BeeleadsAffiliate('your-affiliate-id', 'your-api-secret', 'beeleads-offer-id');
+$arr_offer_fields = $blds->getOfferRequiredFieldnames();
+```
 ###### Sample Output
     Array
     (
@@ -130,9 +146,11 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
 ===
 
 #### *getLeadStatus*
-	$blds = new BeeleadsAffiliate('your-affiliate-id', 'your-api-secret', 'beeleads-offer-id');
-	$lead_id = '28173672ace4c92a0fab8df59d0220519bd4f0d9';
-	$arr_resp = $blds->getLeadStatus($lead_id);
+```php
+$blds = new BeeleadsAffiliate('your-affiliate-id', 'your-api-secret', 'beeleads-offer-id');
+$lead_id = '28173672ace4c92a0fab8df59d0220519bd4f0d9';
+$arr_resp = $blds->getLeadStatus($lead_id);
+```
 		
 ###### Sample Output
     Array
@@ -176,10 +194,10 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
     
 **Note**, possible output lead status are:
 
-- TEST_CONTACT_OK
-- PENDING_APPROVAL
-- APPROVED
-- REJECTED
+- *TEST_CONTACT_OK*
+- *PENDING_APPROVAL*
+- *APPROVED*
+- *REJECTED*
 
 
 
@@ -187,10 +205,8 @@ If you are missing any of this info, please contact suporte@beeleads.com.br
 	
 #### Changelog
 
-**2013-11-26**: Added 'getLeadStatus' method
-
-**2013-09-11**: Added 'getOfferRequiredFieldnames' method
-
-**2013-09-09**: Moved repo to 'Adclick' user
-
-**2013-08-16**: First public release
+- **2013-12-02**: Added "Data Types and Formats" section
+- **2013-11-26**: Added 'getLeadStatus' method
+- **2013-09-11**: Added 'getOfferRequiredFieldnames' method
+- **2013-09-09**: Moved repo to 'Adclick' user
+- **2013-08-16**: First public release
